@@ -1,0 +1,49 @@
+org: arcturus91
+app: softtek
+service: softtek-backend
+frameworkVersion: "3"
+
+custom:
+  tableName: "softtek-swapi-table-v1-${sls:stage}"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [SofttekSwapiTable, Arn]
+  environment:
+    SOFTTEK_SWAPI_TABLE: ${self:custom.tableName}
+
+functions:
+  api:
+    handler: dist/index.handler
+    events:
+      - httpApi: "*"
+
+resources:
+  Resources:
+    SofttekSwapiTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: nombre
+            AttributeType: S
+        KeySchema:
+          - AttributeName: nombre
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tableName}
+
+plugins:
+  - serverless-offline
