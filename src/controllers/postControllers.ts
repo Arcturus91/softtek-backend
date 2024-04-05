@@ -17,7 +17,6 @@ const postPersonaje = async (req: Request, res: Response): Promise<void> => {
     if (typeof softtekPerson.nombre !== "string") {
         res.status(400).json({ error: '"nombre" must be a string' });
     }
-    console.log('softek person:', softtekPerson)
     const params = {
         TableName: SOFTTEK_SWAPI_TABLE,
         Item: {

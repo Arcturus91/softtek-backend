@@ -36,7 +36,6 @@ const getPeliculas = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { data } = yield axios.get("https://swapi.py4e.com/api/films");
         const swapiFilmsArray = data.results;
         const transformedArray = (0, utils_1.swapiApiFilmsTransformer)(swapiFilmsArray);
-        console.log("films!!!!", transformedArray);
         res.send(transformedArray);
     }
     catch (error) {

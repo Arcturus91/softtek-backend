@@ -31,7 +31,6 @@ const getPeliculas = async (req: Request, res: Response): Promise<void> => {
     const { data } = await axios.get("https://swapi.py4e.com/api/films");
     const swapiFilmsArray = data.results;
     const transformedArray = swapiApiFilmsTransformer(swapiFilmsArray);
-    console.log("films!!!!", transformedArray);
     res.send(transformedArray);
   } catch (error) {
     console.error("Error while getting data from SWAPI:", error);

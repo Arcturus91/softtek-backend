@@ -20,7 +20,6 @@ const postPersonaje = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (typeof softtekPerson.nombre !== "string") {
         res.status(400).json({ error: '"nombre" must be a string' });
     }
-    console.log('softek person:', softtekPerson);
     const params = {
         TableName: SOFTTEK_SWAPI_TABLE,
         Item: Object.assign({}, softtekPerson),
