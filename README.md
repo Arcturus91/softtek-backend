@@ -1,122 +1,91 @@
-# Serverless Framework Node Express API on AWS
+# SOFTTEK BACKEND TEST
 
-This template demonstrates how to develop and deploy a simple Node Express API service, backed by DynamoDB database, running on AWS Lambda using the traditional Serverless Framework.
+Este proyecto sirve como backend para la aplicación Softtek, utilizando la arquitectura serverless de AWS. Está diseñado para interactuar con una tabla de DynamoDB.
+El backend se construyoó utilizando Typescript, Node.js, Express, Swagger para la documentación de API, Jest para el unit testing y el serverless framework para despliegue en AWS.
 
-## Usage
+## Características
 
-### Deployment
+- Crea y lee items en una base de datos de DynamoDB.
+- Transforma un endpoint externo para retornar propiedades en español.
+- Documentación API automatizada con Swagger.
+- Implementación sin servidor en AWS
 
-Install dependencies with:
+## Prerequisitos
 
+Requerimientos previos:
+
+- Node.js (version 18.x)
+- AWS CLI, configurado con las credenciales adecuadas
+- Serverless Framework.
+
+## Instalación
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Arcturus91/softtek-backend.git
+cd softtek-backend
 ```
+
+2. Instala dependencias
+
+```bash
 npm install
 ```
 
-and then deploy with:
-
-```
-serverless deploy
-```
-
-After running deploy, you should see output similar to:
+3. Autenticación: Utiliza tus credenciales:
 
 ```bash
-Deploying aws-node-express-dynamodb-api-project to stage dev (us-east-1)
-
-✔ Service deployed to stack aws-node-express-dynamodb-api-project-dev (196s)
-
-endpoint: ANY - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com
-functions:
-  api: aws-node-express-dynamodb-api-project-dev-api (766 kB)
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [`httpApi` event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/). Additionally, in current configuration, the DynamoDB table will be removed when running `serverless remove`. To retain the DynamoDB table even after removal of the stack, add `DeletionPolicy: Retain` to its resource definition.
-
-### Invocation
-
-After successful deployment, you can create a new user by calling the corresponding endpoint:
+3. Despliegue: Utiliza el siguiente comando para levar la aplicación:
 
 ```bash
-curl --request POST 'https://xxxxxx.execute-api.us-east-1.amazonaws.com/users' --header 'Content-Type: application/json' --data-raw '{"name": "John", "userId": "someUserId"}'
+npm run deploy
 ```
 
-Which should result in the following response:
+4. Verifica las rutas provistas:
+   [![BackEnd|](https://res.cloudinary.com/dad5dandd/image/upload/v1712333001/bpppqgaaeydbcdctgk2g.png)]()
+
+## Documentación en Swagger:
+
+1. Ve al siguiente enlace para ver la documentación en Swagger:
+
+[Swagger endpoint](https://qbgn21yk42.execute-api.us-east-1.amazonaws.com/api-docs)
+
+## Pruebas en Postman:
+
+1. Get personajes Endpoint:
+
+[Get personajes](https://qbgn21yk42.execute-api.us-east-1.amazonaws.com/api/personajes)
+
+Resultado:
+[![BackEnd|](https://res.cloudinary.com/dad5dandd/image/upload/v1712333703/qbszajxcno6bzcnsuqgp.png)]()
+
+Resultado:
+
+2. Post Personaje Endpoint
+   [Post Personajes](https://qbgn21yk42.execute-api.us-east-1.amazonaws.com/api/personajes)
+
+Resultado:
+[![BackEnd|](https://res.cloudinary.com/dad5dandd/image/upload/v1712334293/xjgrgyuqjmtx5l9cvnrl.png)]()
+
+3. Get Personaje agregado Endpoint
+
+[Get Personaje agreado](https://qbgn21yk42.execute-api.us-east-1.amazonaws.com/api/personajes/Maria)
+
+Resultado:
+[![BackEnd|](https://res.cloudinary.com/dad5dandd/image/upload/v1712334484/boe5ej6dvlkkoi7bz0r1.png)]()
+
+## Pruebas Unitarias
+
+1. Utiliza jest y mocks para simular los servicios aws
 
 ```bash
-{"userId":"someUserId","name":"John"}
+npm run test
 ```
 
-You can later retrieve the user by `userId` by calling the following endpoint:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/users/someUserId
-```
-
-Which should result in the following response:
-
-```bash
-{"userId":"someUserId","name":"John"}
-```
-
-If you try to retrieve user that does not exist, you should receive the following response:
-
-```bash
-{"error":"Could not find user with provided \"userId\""}
-```
-
-### Local development
-
-It is also possible to emulate DynamoDB, API Gateway and Lambda locally using the `serverless-dynamodb-local` and `serverless-offline` plugins. In order to do that, run:
-
-```bash
-serverless plugin install -n serverless-dynamodb-local
-serverless plugin install -n serverless-offline
-```
-
-It will add both plugins to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`. Make sure that `serverless-offline` is listed as last plugin in `plugins` section:
-
-```
-plugins:
-  - serverless-dynamodb-local
-  - serverless-offline
-```
-
-You should also add the following config to `custom` section in `serverless.yml`:
-
-```
-custom:
-  (...)
-  dynamodb:
-    start:
-      migrate: true
-    stages:
-      - dev
-```
-
-Additionally, we need to reconfigure `AWS.DynamoDB.DocumentClient` to connect to our local instance of DynamoDB. We can take advantage of `IS_OFFLINE` environment variable set by `serverless-offline` plugin and replace:
-
-```javascript
-const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-```
-
-with the following:
-
-```javascript
-const dynamoDbClientParams = {};
-if (process.env.IS_OFFLINE) {
-  dynamoDbClientParams.region = "localhost";
-  dynamoDbClientParams.endpoint = "http://localhost:8000";
-}
-const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
-```
-
-After that, running the following command with start both local API Gateway emulator as well as local instance of emulated DynamoDB:
-
-```bash
-serverless offline start
-```
-
-To learn more about the capabilities of `serverless-offline` and `serverless-dynamodb-local`, please refer to their corresponding GitHub repositories:
-
-- https://github.com/dherault/serverless-offline
-- https://github.com/99x/serverless-dynamodb-local
+Resultado:
+[![BackEnd|](https://res.cloudinary.com/dad5dandd/image/upload/v1712333386/ahgcng6pv6qwawuwzp36.png)]()
