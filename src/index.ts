@@ -23,27 +23,6 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.use(express.json());
 
-
-/**
- * @swagger
- * /api/users:
- *   get:
- *     summary: Returns a list of users
- *     description: Get a list of all users.
- *     responses:
- *       200:
- *         description: A JSON array of user names
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: string
- */
-app.get("/", async function (req: Request, res: Response) {
-  res.send("health check");
-});
-
 app.use('/api', router)
 
 app.get("/users/:userId", async function (req: Request, res: Response) {

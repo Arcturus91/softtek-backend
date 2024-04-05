@@ -10,7 +10,7 @@ const swaggerDefinition = {
 };
 const options = {
     swaggerDefinition,
-    apis: ["dist/index.js", "dist/routes/router.js"],
+    apis: ["dist/routes/router.js"],
 };
 const swaggerSpec = swaggerJSDoc(options);
 module.exports = swaggerSpec;
