@@ -1,7 +1,8 @@
 "use strict";
 const express = require('express');
 const router = express.Router();
-const { healthCheckController, getPersonajes, getPeliculas } = require('../controllers/getControllers');
+const { healthCheckController, getPersonajes, getPeliculas, getPersonajeByName } = require('../controllers/getControllers');
+const { postPersonaje } = require('../controllers/postControllers');
 /**
  * @swagger
  * /api/:
@@ -171,4 +172,6 @@ router.get("/personajes", getPersonajes);
  *                     description: Fecha de edición de la película.
  */
 router.get("/peliculas", getPeliculas);
+router.get("/personajes/:nombre", getPersonajeByName);
+router.post("/personajes", postPersonaje);
 module.exports = router;
